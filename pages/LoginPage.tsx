@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import type { Profile } from '../types';
 
 interface LocationState {
   error?: string;
@@ -8,10 +9,17 @@ interface LocationState {
 }
 
 const LoginPage: React.FC = () => {
-  const { signIn, isAuthenticated, isActive } = useAuth();
+  const { signIn, isAuthenticated, isActive, profile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const initialError = (location.state as LocationState | null)?.error ?? null;
+
+  const resolveRedirect = (currentProfile: Profile | null, fallback?: string) => {
+    if (fallback === '/admin' || currentProfile?.is_admin) {
+      return '/admin';
+    }
+    return '/app';
+  };
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,9 +28,10 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated && isActive) {
-      navigate('/app', { replace: true });
+      const from = (location.state as LocationState | null)?.from;
+      navigate(resolveRedirect(profile, from), { replace: true });
     }
-  }, [isAuthenticated, isActive, navigate]);
+  }, [isAuthenticated, isActive, location.state, navigate, profile]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,8 +44,9 @@ const LoginPage: React.FC = () => {
 
     setIsLoading(true);
     try {
-      await signIn(email.trim(), password);
-      navigate('/app', { replace: true });
+      const nextProfile = await signIn(email.trim(), password);
+      const from = (location.state as LocationState | null)?.from;
+      navigate(resolveRedirect(nextProfile, from), { replace: true });
     } catch (err: any) {
       setError(err.message || 'Login gagal.');
     } finally {

@@ -1,14 +1,6 @@
 import { supabase } from './supabase';
 import { ProfileStatus } from '../types';
-
-export const PRODUCT_PRICE: number = (() => {
-  const raw = import.meta.env.VITE_PRODUCT_PRICE;
-  const parsed = raw ? parseInt(raw, 10) : NaN;
-  return Number.isFinite(parsed) ? parsed : 299000;
-})();
-
-export const formatRupiah = (n: number): string =>
-  new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
+export { PRODUCT_PRICE, formatRupiah } from './paymentConfig';
 
 export const updateUserStatus = async (
   userId: string,

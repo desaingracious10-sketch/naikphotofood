@@ -38,13 +38,12 @@ CREATE POLICY "Admins can delete profiles"
   USING (public.current_user_is_admin());
 
 -- 4. Promote the first admin
---    Replace the email below with your actual admin email
---    (the user must have already registered via /register first)
+--    Pastikan user ini sudah pernah register terlebih dulu via /register
 UPDATE public.profiles
    SET is_admin = TRUE,
        status = 'active',
        activated_at = NOW()
- WHERE email = 'REPLACE_WITH_YOUR_ADMIN_EMAIL@example.com';
+ WHERE email = 'naikcetakexclusive@gmail.com';
 
 -- 5. Enable realtime broadcast for the profiles table (used by admin dashboard)
 ALTER PUBLICATION supabase_realtime ADD TABLE public.profiles;
@@ -52,4 +51,8 @@ ALTER PUBLICATION supabase_realtime ADD TABLE public.profiles;
 -- ============================================================
 -- DONE. Verify with:
 --   SELECT id, email, full_name, status, is_admin FROM public.profiles;
+-- Login super admin:
+--   email    : naikcetakexclusive@gmail.com
+--   password : gunakan password yang dibuat saat register akun tersebut
+--              (jika lupa, reset dari Supabase Auth dashboard)
 -- ============================================================

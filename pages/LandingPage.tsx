@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ADMIN_EMAIL, ADMIN_WHATSAPP, PRODUCT_PRICE, formatRupiah } from '../lib/paymentConfig';
 
 interface ProblemItem {
   icon: string;
@@ -67,7 +68,6 @@ interface FooterLinkItem {
 
 const COUNTDOWN_STORAGE_KEY = 'np2_cd_end';
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
-const ADMIN_WHATSAPP = '6281234567890';
 
 const problems: ProblemItem[] = [
   {
@@ -243,7 +243,7 @@ const footerGroups: Array<{ title: string; links: FooterLinkItem[] }> = [
     title: 'Bantuan',
     links: [
       { label: 'WhatsApp Admin', href: `https://wa.me/${ADMIN_WHATSAPP}`, external: true },
-      { label: 'Email Admin', href: 'mailto:naikcetakexclusive@gmail.com', external: true },
+      { label: 'Email Admin', href: `mailto:${ADMIN_EMAIL}`, external: true },
       { label: 'Cara Kerja', href: '#np2steps' },
       { label: 'Kembali ke Atas', href: '#top' },
     ],
@@ -306,6 +306,8 @@ const LandingPage: React.FC = () => {
   const heroRef = useRef<HTMLElement | null>(null);
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [countdownEnd, setCountdownEnd] = useState<number>(() => Date.now() + DAY_IN_MS);
+  const promoPriceLabel = formatRupiah(PRODUCT_PRICE);
+  const nextPriceLabel = formatRupiah(PRODUCT_PRICE + 32000);
 
   useEffect(() => {
     setCountdownEnd(getOrCreateCountdownEnd());
@@ -392,10 +394,10 @@ const LandingPage: React.FC = () => {
       <div className={`np2-stickybar ${showStickyBar ? 'np2-stickybar-visible' : ''}`} id="np2sticky">
         <div className="np2-stickybar-text">
           NaikPhoto Food Studio
-          <span>Rp 121.000 · Akses Selamanya</span>
+          <span>{promoPriceLabel} · Akses Selamanya</span>
         </div>
         <Link to="/register" className="np2-btn-sticky">
-          Ambil Promo →
+          Lanjut Checkout →
         </Link>
       </div>
 
@@ -415,12 +417,12 @@ const LandingPage: React.FC = () => {
           </p>
           <div className="np2-hero-price">
             <s>Rp 499.000</s>
-            <strong>Rp 121.000</strong>
+            <strong>{promoPriceLabel}</strong>
             <span>· Akses Selamanya · Tanpa Watermark</span>
           </div>
           <div className="np2-hero-btns">
             <Link to="/register" className="np2-btn-primary">
-              Ya, Saya Mau Ambil Promonya →
+              Beli Sekarang →
             </Link>
             <button type="button" onClick={scrollToDemo} className="np2-btn-secondary">
               Lihat Demo Dulu
@@ -662,9 +664,9 @@ const LandingPage: React.FC = () => {
               <h3>
                 Total: <span className="np2-strike">Rp 5.000.000 / bulan</span>
               </h3>
-              <div className="np2-final-price">NaikPhoto Studio: Rp 121.000</div>
+              <div className="np2-final-price">NaikPhoto Studio: {promoPriceLabel}</div>
               <Link to="/register" className="np2-btn-primary">
-                Lihat Paket Lengkapnya →
+                Lanjut ke Checkout →
               </Link>
             </div>
           </div>
@@ -685,7 +687,7 @@ const LandingPage: React.FC = () => {
             </p>
 
             <div className="np2-countdown-wrap">
-              <div className="np2-countdown-label">⏰ Harga Rp 121.000 berakhir dalam:</div>
+              <div className="np2-countdown-label">⏰ Harga {promoPriceLabel} berakhir dalam:</div>
               <div className="np2-countdown-timer">
                 <div className="np2-cd-unit">
                   <div className="np2-cd-num">{countdown.hours}</div>
@@ -702,7 +704,7 @@ const LandingPage: React.FC = () => {
                   <div className="np2-cd-label">Detik</div>
                 </div>
               </div>
-              <div className="np2-countdown-sub">Setelah timer habis, harga kembali ke Rp 153.000</div>
+              <div className="np2-countdown-sub">Setelah timer habis, harga kembali ke {nextPriceLabel}</div>
             </div>
 
             <div className="np2-pricing-tiers">
@@ -763,17 +765,17 @@ const LandingPage: React.FC = () => {
                 <div className="np2-badge np2-badge-blue">Lifetime Access</div>
                 <div className="np2-badge np2-badge-blue">Tanpa Watermark</div>
               </div>
-              <Link to="/register" className="np2-btn-primary np2-btn-pricing">
-                Ya, Saya Mau Ambil Promo Rp 121.000 →
+              <Link to="/register" className="np2-btn-primary np2-btn-pricing" data-track="landing_checkout_cta">
+                Ya, Saya Mau Ambil Promo {promoPriceLabel} →
               </Link>
               <div className="np2-offer-meta">
                 <span>🔒 Pembayaran aman &amp; terpercaya</span>
-                <span>💳 QRIS / e-wallet / transfer</span>
-                <span>📩 Akses dikirim otomatis setelah bayar</span>
+                <span>💳 QRIS / transfer bank manual</span>
+                <span>📩 Akses diproses setelah konfirmasi admin</span>
               </div>
 
               <div className="np2-urgency">
-                ⚠️ Harga Rp 121.000 hanya untuk periode perkenalan. Setelah itu kembali ke harga normal Rp 499.000.
+                ⚠️ Harga promo {promoPriceLabel} hanya untuk periode perkenalan. Setelah itu kembali ke harga normal Rp 499.000.
               </div>
             </div>
           </div>
@@ -820,10 +822,10 @@ const LandingPage: React.FC = () => {
               Ribuan UMKM kuliner sudah pakai visual yang lebih profesional untuk jualan mereka. Ambil akses NaikPhoto Studio sekarang dan mulai hasilkan konten yang lebih menarik hari ini.
             </p>
             <p className="np2-final-price-hint">
-              Hanya <strong>Rp 121.000</strong> · Akses Selamanya · Tanpa Watermark
+              Hanya <strong>{promoPriceLabel}</strong> · Akses Selamanya · Tanpa Watermark
             </p>
             <Link to="/register" className="np2-btn-white">
-              Saya Mau Ambil Promonya Sekarang →
+              Saya Mau Checkout Sekarang →
             </Link>
           </div>
         </div>

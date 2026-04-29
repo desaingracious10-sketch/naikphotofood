@@ -21,7 +21,7 @@ const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
   }
 
   if (!isAuthenticated || !isActive) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace state={{ from: '/admin' }} />;
   }
 
   if (!profile?.is_admin) {
