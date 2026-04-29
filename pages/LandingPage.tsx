@@ -59,8 +59,15 @@ interface CountdownParts {
   seconds: string;
 }
 
+interface FooterLinkItem {
+  label: string;
+  href: string;
+  external?: boolean;
+}
+
 const COUNTDOWN_STORAGE_KEY = 'np2_cd_end';
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
+const ADMIN_WHATSAPP = '6281234567890';
 
 const problems: ProblemItem[] = [
   {
@@ -213,6 +220,58 @@ const faqs: FaqItem[] = [
   },
 ];
 
+const footerGroups: Array<{ title: string; links: FooterLinkItem[] }> = [
+  {
+    title: 'Produk',
+    links: [
+      { label: 'Demo Aplikasi', href: '#np2demo' },
+      { label: 'Contoh Hasil', href: '#np2fitur' },
+      { label: 'Harga Promo', href: '#np2pricing' },
+      { label: 'Login Dashboard', href: '/login' },
+    ],
+  },
+  {
+    title: 'NaikPhoto Food',
+    links: [
+      { label: 'Masalah yang Diselesaikan', href: '#np2problem' },
+      { label: 'Testimoni', href: '#np2testimonials' },
+      { label: 'FAQ', href: '#np2faq' },
+      { label: 'Ambil Promo', href: '/register' },
+    ],
+  },
+  {
+    title: 'Bantuan',
+    links: [
+      { label: 'WhatsApp Admin', href: `https://wa.me/${ADMIN_WHATSAPP}`, external: true },
+      { label: 'Email Admin', href: 'mailto:naikcetakexclusive@gmail.com', external: true },
+      { label: 'Cara Kerja', href: '#np2steps' },
+      { label: 'Kembali ke Atas', href: '#top' },
+    ],
+  },
+];
+
+const renderFooterLink = (link: FooterLinkItem) => {
+  if (link.href.startsWith('/')) {
+    return (
+      <Link key={link.label} to={link.href} className="np2-footer-link">
+        {link.label}
+      </Link>
+    );
+  }
+
+  return (
+    <a
+      key={link.label}
+      href={link.href}
+      className="np2-footer-link"
+      target={link.external ? '_blank' : undefined}
+      rel={link.external ? 'noreferrer' : undefined}
+    >
+      {link.label}
+    </a>
+  );
+};
+
 const getOrCreateCountdownEnd = (): number => {
   if (typeof window === 'undefined') {
     return Date.now() + DAY_IN_MS;
@@ -298,7 +357,38 @@ const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="np2-wrap">
+    <div className="np2-wrap" id="top">
+      <header className="np2-topbar">
+        <div className="np2-container np2-topbar-inner">
+          <Link to="/" className="np2-brand">
+            <div className="np2-brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M2 14H8V20H2V14ZM16 2H22V8H16V2ZM8 2C8 8 12 12 18 12V20C10 20 4 14 4 6V2H8Z" />
+              </svg>
+            </div>
+            <div className="np2-brand-copy">
+              <strong>NaikPhoto Food</strong>
+              <span>AI visual studio untuk bisnis kuliner Indonesia</span>
+            </div>
+          </Link>
+
+          <nav className="np2-topnav" aria-label="Navigasi utama">
+            <a href="#np2fitur">Fitur</a>
+            <a href="#np2pricing">Harga</a>
+            <a href="#np2faq">FAQ</a>
+          </nav>
+
+          <div className="np2-topcta">
+            <Link to="/login" className="np2-topbtn np2-topbtn-ghost">
+              Login
+            </Link>
+            <Link to="/register" className="np2-topbtn np2-topbtn-solid">
+              Ambil Promo
+            </Link>
+          </div>
+        </div>
+      </header>
+
       <div className={`np2-stickybar ${showStickyBar ? 'np2-stickybar-visible' : ''}`} id="np2sticky">
         <div className="np2-stickybar-text">
           NaikPhoto Food Studio
@@ -381,7 +471,7 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      <section className="np2-problem">
+      <section id="np2problem" className="np2-problem">
         <div className="np2-container">
           <div className="np2-tag">Masalah yang sering terjadi</div>
           <h2 className="np2-title">Konten jualan sering mandek karena visual belum siap</h2>
@@ -436,7 +526,7 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      <section className="np2-steps">
+      <section id="np2steps" className="np2-steps">
         <div className="np2-container">
           <div className="np2-tag">3 langkah sederhana</div>
           <h2 className="np2-title">Cara pakainya cepat dipahami, bahkan oleh pemula</h2>
@@ -453,7 +543,7 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      <section id="np2results" className="np2-results">
+      <section id="np2fitur" className="np2-results">
         <div className="np2-container">
           <div className="np2-tag">Contoh hasil</div>
           <h2 className="np2-title">Hasil visual yang siap langsung dipakai untuk jualan</h2>
@@ -483,7 +573,7 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      <section className="np2-testimonials">
+      <section id="np2testimonials" className="np2-testimonials">
         <div className="np2-container">
           <div className="np2-tag">Kisah Sukses</div>
           <h2 className="np2-title">Udah +300 F&amp;B Sellers yang Terbantu</h2>
@@ -704,7 +794,7 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      <section className="np2-faq">
+      <section id="np2faq" className="np2-faq">
         <div className="np2-container">
           <div className="np2-tag">FAQ</div>
           <h2 className="np2-title">Pertanyaan yang paling sering ditanyakan</h2>
@@ -738,6 +828,51 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      <footer className="np2-footer">
+        <div className="np2-container np2-footer-grid">
+          <div className="np2-footer-brand">
+            <Link to="/" className="np2-brand np2-brand-footer">
+              <div className="np2-brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M2 14H8V20H2V14ZM16 2H22V8H16V2ZM8 2C8 8 12 12 18 12V20C10 20 4 14 4 6V2H8Z" />
+                </svg>
+              </div>
+              <div className="np2-brand-copy">
+                <strong>NaikPhoto Food</strong>
+                <span>Bikin visual makanan lebih menjual, lebih cepat, dan lebih rapi.</span>
+              </div>
+            </Link>
+
+            <p className="np2-footer-about">
+              NaikPhoto Food membantu owner kuliner menyiapkan visual promo, katalog, dan iklan lebih cepat tanpa perlu studio mahal atau editing rumit.
+            </p>
+
+            <div className="np2-footer-actions">
+              <Link to="/login" className="np2-topbtn np2-topbtn-ghost">
+                Login
+              </Link>
+              <Link to="/register" className="np2-topbtn np2-topbtn-solid">
+                Ambil Promo
+              </Link>
+            </div>
+          </div>
+
+          {footerGroups.map((group) => (
+            <div key={group.title} className="np2-footer-col">
+              <h3>{group.title}</h3>
+              <div className="np2-footer-links">
+                {group.links.map(renderFooterLink)}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="np2-container np2-footer-bottom">
+          <p>© 2026 NaikPhoto Food. Dibuat untuk membantu bisnis kuliner Indonesia tampil lebih premium dan lebih menjual.</p>
+          <a href="#top" className="np2-footer-backlink">Kembali ke atas ↑</a>
+        </div>
+      </footer>
     </div>
   );
 };
