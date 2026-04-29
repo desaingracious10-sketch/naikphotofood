@@ -35,29 +35,48 @@ const RegisterPage: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const { data, error: signUpError } = await supabase.auth.signUp({
+      const profilePayload = {
+        full_name: form.fullName.trim(),
         email: form.email.trim(),
+        whatsapp: form.whatsapp.trim(),
+        status: 'pending' as const,
+        plan: 'lifetime',
+      };
+
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: profilePayload.email,
         password: form.password,
+        options: {
+          data: profilePayload,
+        },
       });
 
       if (signUpError) throw signUpError;
       if (!data.user) throw new Error('Gagal membuat akun.');
 
-      const { error: profileError } = await supabase.from('profiles').insert({
-        id: data.user.id,
-        full_name: form.fullName.trim(),
-        email: form.email.trim(),
-        whatsapp: form.whatsapp.trim(),
-        status: 'pending',
-        plan: 'lifetime',
-      });
+      if (data.session) {
+        const { error: profileError } = await supabase.from('profiles').upsert({
+          id: data.user.id,
+          ...profilePayload,
+        });
 
-      if (profileError) {
-        console.error('Profile insert error:', profileError);
-        throw new Error('Gagal menyimpan data profile. Coba lagi atau hubungi admin.');
+        if (profileError) {
+          console.error('Profile upsert error:', profileError);
+          throw new Error('Gagal menyimpan data profile. Pastikan SQL setup profiles di Supabase sudah dijalankan.');
+        }
       }
 
-      navigate(`/checkout?email=${encodeURIComponent(form.email.trim())}`, { replace: true });
+      if (!data.session) {
+        navigate('/login', {
+          replace: true,
+          state: {
+            error: 'Akun berhasil dibuat. Cek email untuk verifikasi dulu, lalu login kembali.',
+          },
+        });
+        return;
+      }
+
+      navigate(`/checkout?email=${encodeURIComponent(profilePayload.email)}`, { replace: true });
     } catch (err: any) {
       setError(err.message || 'Registrasi gagal.');
     } finally {
